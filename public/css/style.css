@@ -1,0 +1,68 @@
+body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+}
+
+#chapeu {
+    width: 200px;
+    height: auto;
+}
+
+#selecao-container {
+    transition: opacity 1s ease;
+}
+
+#pensando {
+    font-size: 20px;
+    font-style: italic;
+    color: #666;
+    margin-top: 20px;
+}
+
+#resultado {
+    margin-top: 20px;
+    opacity: 0;
+    transition: opacity 1s ease;
+}
+
+#botoes {
+    margin-top: 30px;
+    opacity: 0;
+    transition: opacity 1s ease;
+}
+
+#casa {
+    font-size: 24px;
+    font-weight: bold;
+    color: #800000; /* Vermelho escuro */
+}
+
+a {
+    display: inline-block;
+    margin: 10px;
+    padding: 10px 20px;
+    background-color: #800000;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+}
+
+a:hover {
+    background-color: #600000;
+}
+
+select {
+    padding: 8px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    width: 200px;
+    margin-bottom: 10px;
+}
+
+select:focus {
+    outline: none;
+    border-color: #800000;
+    box-shadow: 0 0 5px rgba(128, 0, 0, 0.2);
+}
