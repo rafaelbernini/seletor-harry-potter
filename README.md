@@ -115,11 +115,5 @@ O sistema analisa as seguintes características para cada casa:
 
 Este projeto está sob a licença MIT. Veja o arquivo `LICENSE` para mais detalhes.
 
-## Contato 📧
-
-Seu Nome - [seu-email@exemplo.com]
-
-Link do Projeto: [https://github.com/seu-usuario/seletor-harry-potter](https://github.com/seu-usuario/seletor-harry-potter)
-
 ---
 ⚡️ Desenvolvido com magia por [Seu Nome]
