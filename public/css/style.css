@@ -1,22 +1,36 @@
+@import url('https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap');
+
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Crimson Text', serif;
     text-align: center;
+    background-color: #1a1a1a;
+    color: #d4af37;
+    background-image: url('/images/parchment-bg.png');
+    background-repeat: repeat;
 }
 
 #chapeu {
-    width: 200px;
+    width: 800px;
     height: auto;
+    filter: drop-shadow(0 0 10px rgba(212, 175, 55, 0.3));
 }
 
 #selecao-container {
     transition: opacity 1s ease;
+    background-color: rgba(26, 26, 26, 0.8);
+    padding: 20px;
+    border-radius: 10px;
+    border: 2px solid #d4af37;
+    max-width: 800px;
+    margin: 20px auto;
 }
 
 #pensando {
-    font-size: 20px;
+    font-size: 22px;
     font-style: italic;
-    color: #666;
+    color: #d4af37;
     margin-top: 20px;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
 }
 
 #resultado {
@@ -32,37 +46,83 @@ body {
 }
 
 #casa {
-    font-size: 24px;
+    font-size: 28px;
     font-weight: bold;
-    color: #800000; /* Vermelho escuro */
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
 }
+
+/* Cores específicas para cada casa */
+.gryffindor { color: #740001; }
+.slytherin { color: #1a472a; }
+.ravenclaw { color: #0e1a40; }
+.hufflepuff { color: #ecb939; }
 
 a {
     display: inline-block;
     margin: 10px;
-    padding: 10px 20px;
-    background-color: #800000;
-    color: white;
+    padding: 12px 24px;
+    background-color: #d4af37;
+    color: #1a1a1a;
     text-decoration: none;
     border-radius: 5px;
-    transition: background-color 0.3s;
+    transition: all 0.3s;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border: 2px solid #d4af37;
 }
 
 a:hover {
-    background-color: #600000;
+    background-color: transparent;
+    color: #d4af37;
+    box-shadow: 0 0 15px rgba(212, 175, 55, 0.5);
 }
 
 select {
-    padding: 8px;
+    padding: 10px;
     font-size: 16px;
-    border: 1px solid #ccc;
+    font-family: 'Crimson Text', serif;
+    border: 2px solid #d4af37;
     border-radius: 4px;
-    width: 200px;
-    margin-bottom: 10px;
+    width: 220px;
+    margin-bottom: 15px;
+    background-color: rgba(26, 26, 26, 0.9);
+    color: #d4af37;
+    cursor: pointer;
 }
 
 select:focus {
     outline: none;
-    border-color: #800000;
-    box-shadow: 0 0 5px rgba(128, 0, 0, 0.2);
+    border-color: #d4af37;
+    box-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
+}
+
+/* Adicionar scroll personalizado */
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: #1a1a1a;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #d4af37;
+    border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #b38f2d;
+}
+/*
+.botao-hogwarts {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}*/
+
+.icone-botao {
+    width: 20px;
+    height: 20px;
+    object-fit: contain;
 }

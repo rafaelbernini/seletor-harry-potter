@@ -1,21 +1,35 @@
-// Frases que o chapéu vai "pensar" durante a seleção
+// Frases que o chapéu vai "pensar" durante a seleção (em ordem aleatória)
 const frasesPensamento = [
     "Hmm... interessante...",
     "Vejo muito potencial...",
     "Que mente fascinante...",
     "Deixe-me ver...",
-    "Difícil... muito difícil..."
+    "Difícil... muito difícil...",
+    "Ah, que escolha intrigante...",
+    "Muita coragem, vejo aqui...",
+    "Que mente brilhante...",
+    "Bastante ambição...",
+    "Vejo grandes conquistas...",
+    "Muita determinação...",
+    "Uma mente única...",
+    "Que personalidade forte...",
+    "Escolhas, escolhas...",
+    "Muito talento, sem dúvida..."
 ];
 
 // Elemento que mostra as frases de pensamento
 const pensandoElement = document.getElementById("pensando");
 let fraseAtual = 0;
 
-// Troca as frases a cada 2 segundos
+// Função para obter uma frase aleatória
+function getFraseAleatoria() {
+    return frasesPensamento[Math.floor(Math.random() * frasesPensamento.length)];
+}
+
+// Troca as frases a cada 1 segundos de forma aleatória
 const intervalId = setInterval(() => {
-    pensandoElement.textContent = frasesPensamento[fraseAtual];
-    fraseAtual = (fraseAtual + 1) % frasesPensamento.length;
-}, 2000);
+    pensandoElement.textContent = getFraseAleatoria();
+}, 1000);
 
 // Após 10 segundos, mostra o resultado
 setTimeout(() => {

@@ -13,7 +13,8 @@
         <p id="pensando">Hmm... deixe-me pensar...</p>
     </div>
 
-    <div id="resultado" style="display: none;">
+    <div id="resultado" style="display: none; max-width: 800px; margin: 0 auto; text-align: center;">
+
         <h2>
             <?php
             echo "Aluno: " . (isset($aluno['nome']) ? $aluno['nome'] : 'Nome não informado') . "<br>";

@@ -72,11 +72,13 @@ class SeletorController {
         $descricaoLower = strtolower($descricao);
         
         // Arrays de palavras-chave para cada tipo de perfil
+      
         $palavrasChave = [
-            'grifinoria' => ['coragem', 'bravura', 'determinação', 'força', 'heroísmo', 'ousadia'],
-            'sonserina' => ['ambição', 'astúcia', 'liderança', 'poder', 'estratégia', 'determinação'],
-            'corvinal' => ['inteligência', 'sabedoria', 'conhecimento', 'criatividade', 'estudo', 'aprendizado'],
-            'lufa_lufa' => ['lealdade', 'dedicação', 'trabalho', 'paciência', 'justiça', 'honestidade']
+            'grifinoria' => ['coragem', 'bravura', 'determinação', 'força', 'heroísmo', 'ousadia', 'nobreza'],
+            'sonserina' => ['ambição', 'astúcia', 'liderança', 'poder', 'estratégia', 'determinação', 'orgulho'],
+            'corvinal' => ['inteligência', 'sabedoria', 'conhecimento', 'criatividade', 'estudo', 'aprendizado', 
+                          'curiosidade', 'lógica', 'raciocínio', 'pesquisa', 'inovação', 'descoberta'],
+            'lufa_lufa' => ['lealdade', 'dedicação', 'trabalho', 'paciência', 'justiça', 'honestidade', 'bondade']
         ];
         
         // Contagem de palavras-chave encontradas
@@ -94,6 +96,24 @@ class SeletorController {
                     $pontos[$casa]++;
                 }
             }
+        }
+        
+        // Adiciona verificação de distribuição
+        $database = new Database();
+        $db = $database->getConnection();
+        $aluno = new Aluno($db);
+
+        $distribuicao = [
+            'grifinoria' => $aluno->getAlunosByCasa("Grifinória"),
+            'sonserina' => $aluno->getAlunosByCasa("Sonserina"),
+            'corvinal' => $aluno->getAlunosByCasa("Corvinal"),
+            'lufa_lufa' => $aluno->getAlunosByCasa("Lufa-Lufa")
+        ];
+
+        // Se alguma casa estiver com menos alunos, aumenta suas chances
+        $casaMenosAlunos = array_search(min($distribuicao), $distribuicao);
+        if (max($distribuicao) - min($distribuicao) >= 2) {
+            $pontos[$casaMenosAlunos] += 2; // Bônus para casa com menos alunos
         }
         
         // Determina o perfil baseado nas palavras encontradas
@@ -123,7 +143,8 @@ class SeletorController {
         $caracteristicas = [
             'Grifinória' => ['coragem', 'bravura', 'determinação', 'ousadia', 'nobreza', 'lealdade'],
             'Sonserina' => ['ambição', 'astúcia', 'determinação', 'liderança', 'engenhosidade', 'perspicácia'],
-            'Corvinal' => ['inteligência', 'sabedoria', 'criatividade', 'originalidade', 'conhecimento', 'perspicácia'],
+            'Corvinal' => ['inteligência', 'sabedoria', 'criatividade', 'originalidade', 'conhecimento', 
+                          'curiosidade', 'lógica', 'raciocínio', 'pesquisa', 'inovação', 'descoberta'],
             'Lufa-Lufa' => ['dedicação', 'lealdade', 'paciência', 'justiça', 'trabalho', 'honestidade']
         ];
         
@@ -157,23 +178,25 @@ class SeletorController {
             $casaEscolhida = $casasEmpatadas[array_rand($casasEmpatadas)];
         }
         
-        return $casaEscolhida;
-        // Esta é uma implementação simplificada que associa diretamente o perfil à casa.
-        // Você precisará adaptar isso com base na estrutura real do perfil retornado pela sua API.
+        // Verifica a distribuição atual
+        $database = new Database();
+        $db = $database->getConnection();
+        $aluno = new Aluno($db);
 
-        if (strpos($perfil, "Corajoso") !== false || strpos($perfil, "leal") !== false || strpos($perfil, "determinado") !== false) {
-            return "Grifinória";
-        } elseif (strpos($perfil, "Ambicioso") !== false || strpos($perfil, "astuto") !== false || strpos($perfil, "engenhoso") !== false) {
-            return "Sonserina";
-        } elseif (strpos($perfil, "Inteligente") !== false || strpos($perfil, "criativo") !== false || strpos($perfil, "sábio") !== false) {
-            return "Corvinal";
-        } elseif (strpos($perfil, "Paciente") !== false || strpos($perfil, "justo") !== false || strpos($perfil, "dedicado") !== false) {
-            return "Lufa-Lufa";
-        } else {
-            // Se não for possível determinar a casa, retorna uma casa aleatória
-            $casas = ["Grifinória", "Sonserina", "Corvinal", "Lufa-Lufa"];
-            return $casas[array_rand($casas)];
+        $distribuicao = [
+            'Grifinória' => $aluno->getAlunosByCasa("Grifinória"),
+            'Sonserina' => $aluno->getAlunosByCasa("Sonserina"),
+            'Corvinal' => $aluno->getAlunosByCasa("Corvinal"),
+            'Lufa-Lufa' => $aluno->getAlunosByCasa("Lufa-Lufa")
+        ];
+
+        // Se houver desbalanceamento significativo
+        if (max($distribuicao) - min($distribuicao) >= 2) {
+            $casaMenosAlunos = array_search(min($distribuicao), $distribuicao);
+            return $casaMenosAlunos;
         }
+        
+        return $casaEscolhida;
     }
 
     public function relatorio() {
@@ -188,5 +211,26 @@ class SeletorController {
         $totalLufaLufa = $aluno->getAlunosByCasa("Lufa-Lufa");
 
         require_once 'C:/xampp/htdocs/seletor-harry-potter/app/views/relatorio.php';
+    }
+
+    public function gerarDescricao() {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $data = json_decode(file_get_contents('php://input'), true);
+            $nome = $data['nome'] ?? '';
+
+            require_once 'app/services/OpenAIService.php';
+            $openai = new OpenAIService();
+            $descricao = $openai->gerarDescricao($nome);
+
+            if ($descricao === false) {
+                http_response_code(500);
+                echo json_encode(['erro' => 'Falha ao gerar descrição']);
+                exit;
+            }
+
+            header('Content-Type: application/json');
+            echo json_encode(['descricao' => $descricao]);
+            exit;
+        }
     }
 }

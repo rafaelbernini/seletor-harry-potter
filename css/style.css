@@ -1,0 +1,49 @@
+.botao-hogwarts {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 12px 24px;
+    background-color: #740001; /* Vermelho Grifinória */
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    margin: 20px auto;
+    width: 200px;
+    text-decoration: none; /* Remove sublinhado do link */
+    display: inline-block;
+    text-align: center;
+}
+
+.botao-hogwarts:hover {
+    background: linear-gradient(45deg, #1a472a, #2a623d);
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+}
+
+.botao-hogwarts:active {
+    transform: translateY(0);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.chapeu-icone {
+    width: 28px;
+    height: 28px;
+    color: #d3a625;
+    filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.2));
+}
+
+@keyframes flutuacao {
+    0% { transform: translateY(0); }
+    50% { transform: translateY(-3px); }
+    100% { transform: translateY(0); }
+}
+
+.chapeu-icone {
+    animation: flutuacao 2s ease-in-out infinite;
+} 
+
