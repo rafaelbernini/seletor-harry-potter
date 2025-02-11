@@ -9,7 +9,7 @@
     <h1>Chapéu Seletor - Resultado</h1>
 
     <div id="selecao-container">
-        <img src="img/chapeu.gif" alt="Chapéu Seletor" id="chapeu">
+        <img src="C:/xampp/htdocs/seletor-harry-potter/public/img/chapeu.gif" alt="Chapéu Seletor" id="chapeu">
         <p id="pensando">Hmm... deixe-me pensar...</p>
     </div>
 

@@ -1,10 +1,21 @@
 <?php
+// Inicia o buffer de saída
+ob_start();
 
 require_once '../config.php';
 require_once '../app/core/Database.php';
 require_once '../app/controllers/SeletorController.php';
 
-// Adiciona o elemento de áudio HTML antes de qualquer saída
+$action = isset($_GET['action']) ? $_GET['action'] : 'index';
+$controller = new SeletorController();
+
+// Se for uma ação AJAX, não queremos o HTML da página
+if ($action === 'gerarDescricao') {
+    $controller->gerarDescricao();
+    exit;
+}
+
+// Para outras ações, continuamos com o HTML normal
 ?>
 <!DOCTYPE html>
 <html>
@@ -16,11 +27,6 @@ require_once '../app/controllers/SeletorController.php';
 </head>
 <body>
 <?php
-
-$action = isset($_GET['action']) ? $_GET['action'] : 'index';
-
-$controller = new SeletorController();
-
 switch ($action) {
     case 'cadastrar':
         $controller->cadastrar();
@@ -31,14 +37,13 @@ switch ($action) {
     case 'relatorio':
         $controller->relatorio();
         break;
-    case 'gerarDescricao':
-        $controller->gerarDescricao();
-        break;
     default:
         $controller->index();
         break;
 }
-
 ?>
 </body>
 </html>
+<?php
+ob_end_flush();
+?>

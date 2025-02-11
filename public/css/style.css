@@ -16,13 +16,9 @@ body {
 }
 
 #selecao-container {
-    transition: opacity 1s ease;
-    background-color: rgba(26, 26, 26, 0.8);
-    padding: 20px;
-    border-radius: 10px;
-    border: 2px solid #d4af37;
-    max-width: 800px;
     margin: 20px auto;
+    max-width: 600px;
+    text-align: center;
 }
 
 #pensando {
@@ -125,4 +121,29 @@ select:focus {
     width: 20px;
     height: 20px;
     object-fit: contain;
+}
+
+#resultado-ia {
+    margin: 20px auto;
+    max-width: 800px;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+}
+
+#casa-resultado {
+    color: #740001;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+#descricao-resultado {
+    font-size: 18px;
+    line-height: 1.6;
+    color: #333;
+    margin: 20px 0;
+    text-align: justify;
+    padding: 0 20px;
 }

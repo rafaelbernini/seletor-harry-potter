@@ -1,34 +1,52 @@
 <?php
 
 require_once 'C:/xampp/htdocs/seletor-harry-potter/app/models/Aluno.php';
+require_once 'C:/xampp/htdocs/seletor-harry-potter/app/services/GeminiService.php';
 
 class SeletorController {
+    private $db;
+    private $geminiService;
+
+    public function __construct() {
+        $database = new Database();
+        $this->db = $database->getConnection();
+        $this->geminiService = new GeminiService();
+    }
 
     public function index() {
         require_once 'C:/xampp/htdocs/seletor-harry-potter/app/views/cadastro.php';
     }
 
     public function cadastrar() {
-      $database = new Database();
-      $db = $database->getConnection();
-      $aluno = new Aluno($db);
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            $nome = $_POST['nome'] ?? '';
+            $turma = $_POST['turma'] ?? '';
+            $descricao = $_POST['descricao'] ?? '';
+            
+            try {
+                // Verifica se já existe um registro com este nome
+                $stmt = $this->db->prepare("SELECT id FROM alunos WHERE nome = ?");
+                $stmt->execute([$nome]);
+                
+                if ($stmt->rowCount() > 0) {
+                    // Atualiza o registro existente
+                    $stmt = $this->db->prepare("UPDATE alunos SET turma = ?, descricao = ? WHERE nome = ?");
+                    $stmt->execute([$turma, $descricao, $nome]);
+                } else {
+                    // Insere novo registro
+                    $stmt = $this->db->prepare("INSERT INTO alunos (nome, turma, descricao) VALUES (?, ?, ?)");
+                    $stmt->execute([$nome, $turma, $descricao]);
+                }
 
-      if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-          $aluno->nome = $_POST['nome'];
-          $aluno->turma = $_POST['turma'];
-          $aluno->descricao = $_POST['descricao'];
-
-          if ($aluno->create()) {
-              // Redireciona para a ação de seleção após o cadastro
-              $alunoId = $db->lastInsertId(); // Pega o ID do aluno recém-cadastrado
-              header("Location: " . BASE_URL . "?action=selecionar&id=" . $alunoId);
-              exit;
-          } else {
-              echo "<script>alert('Erro ao cadastrar aluno.');</script>";
-              // Poderia redirecionar de volta para o formulário com uma mensagem de erro
-              require_once 'C:/xampp/htdocs/seletor-harry-potter/app/views/cadastro.php';
-          }
-      }
+                // Redireciona para a página de resultado
+                $alunoId = $this->db->lastInsertId();
+                header("Location: ?action=selecionar&id=" . $alunoId);
+                exit;
+            } catch (Exception $e) {
+                echo "<script>alert('Erro ao cadastrar aluno: " . $e->getMessage() . "');</script>";
+                require_once 'app/views/cadastro.php';
+            }
+        }
     }
 
     public function selecionar() {
@@ -200,36 +218,112 @@ class SeletorController {
     }
 
     public function relatorio() {
-        $database = new Database();
-        $db = $database->getConnection();
-        $aluno = new Aluno($db);
+        try {
+            // Inicializa as estatísticas com as casas corretas
+            $estatisticas = [
+                'Grifinória' => 0,
+                'Sonserina' => 0,
+                'Corvinal' => 0,
+                'Lufa-Lufa' => 0
+            ];
 
-        $alunos = $aluno->getAllAlunos();
-        $totalGrifinoria = $aluno->getAlunosByCasa("Grifinória");
-        $totalSonserina = $aluno->getAlunosByCasa("Sonserina");
-        $totalCorvinal = $aluno->getAlunosByCasa("Corvinal");
-        $totalLufaLufa = $aluno->getAlunosByCasa("Lufa-Lufa");
+            // Busca o total de alunos por casa
+            $stmt = $this->db->query("
+                SELECT 
+                    CASE 
+                        WHEN casa LIKE '%Grif%' THEN 'Grifinória'
+                        WHEN casa LIKE '%Sons%' THEN 'Sonserina'
+                        WHEN casa LIKE '%Corv%' THEN 'Corvinal'
+                        WHEN casa LIKE '%Lufa%' THEN 'Lufa-Lufa'
+                        ELSE casa 
+                    END as casa_normalizada,
+                    COUNT(*) as total 
+                FROM alunos 
+                GROUP BY 
+                    CASE 
+                        WHEN casa LIKE '%Grif%' THEN 'Grifinória'
+                        WHEN casa LIKE '%Sons%' THEN 'Sonserina'
+                        WHEN casa LIKE '%Corv%' THEN 'Corvinal'
+                        WHEN casa LIKE '%Lufa%' THEN 'Lufa-Lufa'
+                        ELSE casa 
+                    END
+            ");
 
-        require_once 'C:/xampp/htdocs/seletor-harry-potter/app/views/relatorio.php';
+            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                if (isset($estatisticas[$row['casa_normalizada']])) {
+                    $estatisticas[$row['casa_normalizada']] = $row['total'];
+                }
+            }
+
+            // Verifica o total de alunos e a distribuição
+            $totalAlunos = array_sum($estatisticas);
+            $alunosPorCasa = ceil(30 / 4); // Deve ser aproximadamente 7-8 alunos por casa
+
+            // Busca todos os alunos com suas informações
+            $stmt = $this->db->query("
+                SELECT 
+                    nome, 
+                    turma, 
+                    CASE 
+                        WHEN casa LIKE '%Grif%' THEN 'Grifinória'
+                        WHEN casa LIKE '%Sons%' THEN 'Sonserina'
+                        WHEN casa LIKE '%Corv%' THEN 'Corvinal'
+                        WHEN casa LIKE '%Lufa%' THEN 'Lufa-Lufa'
+                        ELSE casa 
+                    END as casa,
+                    descricao,
+                    created_at 
+                FROM alunos 
+                ORDER BY created_at DESC
+            ");
+            $alunos = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            // Carrega a view com o caminho completo
+            require_once 'C:/xampp/htdocs/seletor-harry-potter/app/views/relatorio.php';
+        } catch (Exception $e) {
+            echo "Erro ao gerar relatório: " . $e->getMessage();
+        }
     }
 
     public function gerarDescricao() {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            // Limpa qualquer output anterior
+            ob_clean();
+            
             $data = json_decode(file_get_contents('php://input'), true);
             $nome = $data['nome'] ?? '';
 
-            require_once 'app/services/OpenAIService.php';
-            $openai = new OpenAIService();
-            $descricao = $openai->gerarDescricao($nome);
+            try {
+                $resultado = $this->geminiService->gerarDescricao($nome);
+                
+                // Remove os asteriscos da descrição e casa
+                $descricao = str_replace('**', '', $resultado['descricao']);
+                $casa = str_replace('**', '', $resultado['casa']);
+                
+                // Salva no banco de dados
+                $stmt = $this->db->prepare("INSERT INTO alunos (nome, turma, descricao, casa) VALUES (?, ?, ?, ?)");
+                $turma = "DEV32025"; // Pegando a turma padrão
+                $stmt->execute([
+                    $nome,
+                    $turma,
+                    $resultado['descricao'],
+                    $resultado['casa']
+                ]);
 
-            if ($descricao === false) {
+                if ($stmt->rowCount() > 0) {
+                    header('Content-Type: application/json');
+                    echo json_encode([
+                        'descricao' => $resultado['descricao'],
+                        'casa' => $resultado['casa'],
+                        'success' => true
+                    ]);
+                } else {
+                    throw new Exception('Erro ao salvar no banco de dados');
+                }
+            } catch (Exception $e) {
                 http_response_code(500);
-                echo json_encode(['erro' => 'Falha ao gerar descrição']);
-                exit;
+                echo json_encode(['erro' => $e->getMessage()]);
             }
-
-            header('Content-Type: application/json');
-            echo json_encode(['descricao' => $descricao]);
             exit;
         }
     }
