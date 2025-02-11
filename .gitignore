@@ -34,3 +34,5 @@ Thumbs.db
 /public/assets/
 public/uploads/
 config.php
+
+*.mp3
