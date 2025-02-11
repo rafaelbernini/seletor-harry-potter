@@ -33,3 +33,4 @@ Thumbs.db
 # Ignorar arquivos de compilação
 /public/assets/
 public/uploads/
+config.php
