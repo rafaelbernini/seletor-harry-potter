@@ -1,0 +1,35 @@
+# Ignorar arquivos de configuração do ambiente
+.env
+*.local
+
+# Ignorar arquivos de log
+*.log
+
+# Ignorar diretórios de cache
+/cache/
+logs/
+tmp/
+temp/
+
+# Ignorar diretórios de dependências
+/vendor/
+node_modules/
+
+# Ignorar arquivos de sistema
+.DS_Store
+Thumbs.db
+
+# Ignorar arquivos de backup
+*~
+*.bak
+*.swp
+
+# Ignorar arquivos de IDE
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+
+# Ignorar arquivos de compilação
+/public/assets/
+public/uploads/
